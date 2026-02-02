@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #ff6b9d, #feca57);
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ff6b9d;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .yes-btn {
+            background-color: #ff6b9d;
+            color: white;
+        }
+        .no-btn {
+            background-color: #ccc;
+            color: #333;
+            position: relative;
+            transition: all 0.1s;
+        }
+        .no-btn:hover {
+            background-color: #999;
+        }
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-10px, -10px) rotate(-5deg); }
+            50% { transform: translate(10px, 10px) rotate(5deg); }
+            75% { transform: translate(-10px, 10px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        /* Confetti animations and base styles */
+        .confetti-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            will-change: transform, opacity;
+            z-index: 9999;
+        }
+        .confetti-piece {
+            will-change: transform, opacity;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            mix-blend-mode: screen;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(0); opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: translateY(calc(100vh + 200px)); opacity: 0; }
+        }
+
+        @keyframes confetti-sway {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(36px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes confetti-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Would you be my Valentine? ❤️</h1>
+        <button class="yes-btn" onclick="handleYes()">Yes</button>
+        <button class="no-btn" onclick="handleNo()">No</button>
+    </div>
+
+    <script>
+        const messages = [
+            "That's crazy... ❌",
+            "Are you sure? 🤔",
+            "Really? 😢",
+            "Pretty please? 🥺",
+            "I'm hurt 💔",
+            "Bruh.. 😞",
+            "You're breaking my heart 😭",
+            "Okay, but like... yes? 😊",
+            "Please reconsider 🙏",
+            "I believe in us ✨"
+        ];
+        let messageIndex = 0;
+        
+        function handleYes() {
+            const container = document.querySelector(".container");
+            container.innerHTML = `
+                <h1 style="font-size: 3.5em; animation: pulse 1s infinite;">You make me the happiest man alive! 💕</h1>
+                <img src="us.png" alt="us" style="max-width: 90%; height: auto; max-height: 360px; border-radius: 15px; margin: 20px 0; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+                <p style="font-size: 1.5em; color: #ff6b9d; margin-top: 20px;">I love you! 😘</p>
+            `;
+            document.body.style.background = "linear-gradient(135deg, #ff1493, #ff69b4)";
+            createConfetti();
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        function createConfetti() {
+            // Professional-looking confetti using nested wrapper + piece
+            const total = 100;
+            const batchSize = 30;
+            const batchDelay = 190;
+            const colors = ["#ff1493", "#ff69b4", "#ffd700", "#ff6347", "#ff00ff", "#00ff88", "#fff66b", "#00d4ff", "#ffb6c1"];
+            let spawned = 0;
+
+            function spawnBatch() {
+                const count = Math.min(batchSize, total - spawned);
+                for (let i = 0; i < count; i++) {
+                    // wrapper that falls (handles translateY)
+                    const wrap = document.createElement('div');
+                    wrap.className = 'confetti-wrapper';
+                    wrap.style.left = (Math.random() * window.innerWidth) + 'px';
+                    wrap.style.top = '-60px';
+                    wrap.style.width = '0px';
+                    wrap.style.height = '0px';
+
+                    // piece inside wrapper handles sway & spin
+                    const piece = document.createElement('div');
+                    piece.className = 'confetti-piece';
+                    const size = Math.floor(Math.random() * 14) + 6;
+                    piece.style.width = size + 'px';
+                    piece.style.height = size + 'px';
+                    piece.style.position = 'absolute';
+                    // center piece horizontally on wrapper
+                    piece.style.left = -(size / 2) + 'px';
+                    piece.style.top = '0px';
+
+                    // pick style: rectangle, circle, or triangle
+                    const type = Math.random();
+                    const baseColor = colors[Math.floor(Math.random() * colors.length)];
+                    if (type < 0.55) {
+                        // rectangle / rounded
+                        piece.style.background = baseColor;
+                        piece.style.borderRadius = (Math.random() * 18) + 'px';
+                    } else if (type < 0.85) {
+                        // circle
+                        piece.style.background = baseColor;
+                        piece.style.borderRadius = '50%';
+                    } else {
+                        // triangle via borders
+                        const tri = document.createElement('div');
+                        const triSize = size;
+                        tri.style.width = '0px';
+                        tri.style.height = '0px';
+                        tri.style.borderLeft = (triSize/2) + 'px solid transparent';
+                        tri.style.borderRight = (triSize/2) + 'px solid transparent';
+                        tri.style.borderBottom = triSize + 'px solid ' + baseColor;
+                        tri.style.position = 'absolute';
+                        tri.style.left = -(triSize/2) + 'px';
+                        tri.style.top = '0px';
+                        // random rotation
+                        tri.style.transform = 'rotate(' + (Math.random() * 60 - 30) + 'deg)';
+                        piece.appendChild(tri);
+                        piece.style.width = '0px';
+                        piece.style.height = triSize + 'px';
+                        piece.style.background = 'transparent';
+                    }
+
+                    // gradient shine for nicer look (only if not triangle)
+                    if (piece.childElementCount === 0) {
+                        piece.style.backgroundImage = `linear-gradient(135deg, rgba(255,255,255,0.12), transparent), linear-gradient(135deg, ${baseColor}, ${baseColor})`;
+                    }
+
+                    // random sway and spin durations
+                    const fallDuration = 2200 + Math.random() * 3000; // 2.2 - 5.2s
+                    const swayDuration = 1200 + Math.random() * 1600; // 1.2 - 2.8s
+                    const spinDuration = 800 + Math.random() * 1600; // 0.8 - 2.4s
+                    const swayDelay = Math.random() * 300;
+
+                    // apply CSS animations
+                    wrap.style.animation = `confetti-fall ${fallDuration}ms cubic-bezier(.2,.7,.2,1) forwards`;
+                    piece.style.animation = `confetti-sway ${swayDuration}ms ease-in-out ${swayDelay}ms infinite alternate, confetti-spin ${spinDuration}ms linear ${swayDelay}ms infinite`;
+
+                    wrap.appendChild(piece);
+                    document.body.appendChild(wrap);
+
+                    // cleanup when fall animation finishes
+                    wrap.addEventListener('animationend', function (ev) {
+                        if (ev.animationName === 'confetti-fall') {
+                            try { wrap.remove(); } catch (e) { /* ignore */ }
+                        }
+                    });
+                }
+                spawned += count;
+                if (spawned < total) setTimeout(spawnBatch, batchDelay);
+            }
+
+            spawnBatch();
+        }
+        
+        function moveButtonAway() {
+            const randomX = Math.random() * (window.innerWidth - 100);
+            const randomY = Math.random() * (window.innerHeight - 50);
+            noBtn.style.position = "fixed";
+            noBtn.style.left = randomX + "px";
+            noBtn.style.top = randomY + "px";
+            
+            // Add spinning animation
+            noBtn.style.animation = "shake 0.5s";
+            
+            // Change text to next message
+            noBtn.textContent = messages[messageIndex % messages.length];
+            messageIndex++;
+            
+            // Random color change
+            const colors = ["#ff6b9d", "#ff69b4", "#ff1493", "#c71585", "#db7093"];
+            noBtn.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            noBtn.style.color = "white";
+            
+            // Random rotation
+            const safeRotation = [-15, -10, -5, 5, 10, 15][Math.floor(Math.random() * 6)];
+            noBtn.style.transform = `rotate(${safeRotation}deg)`;
+        }
+        
+        const noBtn = document.querySelector(".no-btn");
+        
+        // Desktop hover & click
+        noBtn.addEventListener("mouseover", moveButtonAway);
+        noBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            moveButtonAway();
+        });
+        
+        // Mobile touch - move away when they get close
+        document.addEventListener("touchmove", function(e) {
+            const touch = e.touches[0];
+            const rect = noBtn.getBoundingClientRect();
+            const distance = Math.hypot(
+                touch.clientX - (rect.left + rect.width / 2),
+                touch.clientY - (rect.top + rect.height / 2)
+            );
+            
+            if (distance < 150) {
+                moveButtonAway();
+            }
+        });
+        
+        noBtn.addEventListener("touchstart", function(e) {
+            e.preventDefault();
+            moveButtonAway();
+        });
+    </script>
+</body>
+</html>
